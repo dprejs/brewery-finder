@@ -54,6 +54,7 @@ class App extends Component {
     })
   }
   searchChange(e) {
+    e.preventDefault()
     e.persist()
     this.setState({
       [e.target.name]: e.target.value
@@ -104,7 +105,7 @@ class App extends Component {
         <button onClick={this.searchLocation}>search</button>
         {this.state.location ? <h2>lat: {this.state.location.latitude}
           long: {this.state.location.longitude}</h2> : null}
-        {this.state.breweries.length ? this.state.breweries.map(brewery => brewery.name) : null}
+        {this.state.breweries.length ? <div>{this.state.breweries.map(brewery => brewery.name)}</div> : null}
         {this.state.breweries.length ? <Map breweries={this.state.breweries}
           loc={this.state.location}
         /> : null}
