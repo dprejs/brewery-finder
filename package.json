@@ -16,7 +16,6 @@
     "@babel/core": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
-    "@testing-library/react": "^12.1.2",
     "babel-loader": "^8.0.2",
     "css-loader": "^1.0.0",
     "style-loader": "^0.23.0",
@@ -25,11 +24,15 @@
     "webpack-dev-server": "^3.1.8"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "^1.12.5",
     "axios": "^0.23.0",
     "express": "^4.17.1",
+    "file-loader": "^6.2.0",
+    "google-maps-react": "^2.0.6",
     "nodemon": "^2.0.13",
     "react": "^16.14.0",
-    "react-dom": "^16.5.2",
+    "react-dom": "^16.14.0",
+    "react-google-maps": "^9.4.5",
     "react-hot-loader": "^4.3.11"
   }
 }

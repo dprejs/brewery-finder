@@ -12,6 +12,15 @@ module.exports = {
         options: { presets: ["@babel/env"] }
       },
       {
+        test: /\.(png|jp(e*)g|svg|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: { name: 'images/[name].[ext]' }
+          }
+        ]
+      },
+      {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
       }
@@ -23,11 +32,11 @@ module.exports = {
     publicPath: "/dist/",
     filename: "bundle.js"
   },
-  devServer: {
-    contentBase: path.join(__dirname, "public/"),
-    port: 3000,
-    publicPath: "http://localhost:3000/dist/",
-    hotOnly: true
-  },
+  // devServer: {
+  //   contentBase: path.join(__dirname, "public/"),
+  //   port: 3000,
+  //   publicPath: "http://localhost:3000/dist/",
+  //   hotOnly: true
+  // },
   // plugins: [new webpack.HotModuleReplacementPlugin()]
 };
