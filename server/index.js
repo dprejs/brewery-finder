@@ -19,7 +19,7 @@ app.post('/user', (req, res) => {
     if (results.rows.length === 0) {
       db.addUser(req.body.name)
       .then((results) => {
-        res.Status(201)
+        res.status(201)
         res.json(results.rows[0].id)
       })
       .catch((err) => {
@@ -31,6 +31,17 @@ app.post('/user', (req, res) => {
       res.status(200);
       res.json(results.rows[0].id);
     }
+  })
+})
+app.post('/favorites', (req, res) => {
+  db.addFavorite(req.body)
+  .then(() => {
+    console.log('favorite added')
+    res.sendStatus(201)
+  })
+  .catch((err) => {
+    console.log('error adding favorite', err)
+    res.sendStatus(500)
   })
 })
 

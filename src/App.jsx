@@ -23,6 +23,8 @@ class App extends Component {
       locSearch: '',
       mapCenter: undefined,
       userInput: '',
+      userId: undefined,
+      userName: undefined
     }
     this.setLocal = this.setLocal.bind(this);
     this.getBreweries = this.getBreweries.bind(this);
@@ -103,6 +105,13 @@ class App extends Component {
     axios.post('/user', {
       name: this.state.userInput
     })
+    .then((res) => {
+      this.setState({
+        userId: res.data,
+        userName: this.state.userInput
+      })
+      console.log(res);
+    })
   }
   componentDidMount() {
     this.setState({
@@ -120,7 +129,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1> Hello, Beer! </h1>
+        {this.state.userName ? <div>Hello {this.state.userName}!<br/></div> : null}
         <input type="text"
         placeholder="user login"
         name="userInput"
@@ -136,7 +145,7 @@ class App extends Component {
         <div>
         <div><span>name </span><span>size </span><span>address </span> <span>website </span> <span>phone </span></div>
         {this.state.breweries.length ? <div>{this.state.breweries.map((brewery) => {
-          return (<Brewery brewery={brewery} goto={this.goto}/>)
+          return (<Brewery brewery={brewery} goto={this.goto} userId={this.state.userId}/>)
           })}</div> : null}
           </div>
         {this.state.breweries.length ? <Map breweries={this.state.breweries}
