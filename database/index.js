@@ -39,10 +39,27 @@ const addFavoriteQuery = (values) => {
     name: 'add-favorite',
     text: `INSERT INTO favorites
     (user_id, id, name, brewery_type, street, city, state, postal_code, country, longitude, latitude, phone, website_url, comment)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+    RETURNING favorite_id`,
     values: [values.user_id, values.id, values.name, values.brewery_type, values.street, values.city,
     values.state, values.postal_code, values.country, values.longitude, values.latitude, values.phone,
     values.website_url, values.comment]
+  }
+}
+const getFavorites = (value) => {
+  return {
+    name: 'get-favorites',
+    text: `SELECT * FROM favorites
+    WHERE user_id=$1`,
+    values: [value]
+  }
+}
+const deleteFavoriteQuery = (value) => {
+  return {
+    name: 'remove-favorite',
+    text: `DELETE FROM favorites
+    WHERE favorite_id=$1`,
+    values: [value]
   }
 }
 
@@ -55,5 +72,11 @@ module.exports = {
   },
   addFavorite: (favorite) => {
     return pool.query(addFavoriteQuery(favorite))
+  },
+  getFavorites: (user_id) => {
+    return pool.query(getFavorites(user_id))
+  },
+  deleteFavorite: (favorite_id) => {
+    return pool.query(deleteFavoriteQuery(favorite_id))
   }
 }

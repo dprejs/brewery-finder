@@ -35,12 +35,34 @@ app.post('/user', (req, res) => {
 })
 app.post('/favorites', (req, res) => {
   db.addFavorite(req.body)
-  .then(() => {
-    console.log('favorite added')
-    res.sendStatus(201)
+  .then((result) => {
+    res.status(201)
+    res.json(result.rows[0].favorite_id)
   })
   .catch((err) => {
     console.log('error adding favorite', err)
+    res.sendStatus(500)
+  })
+})
+
+app.get('/favorites', (req, res) => {
+  db.getFavorites(req.query.user_id)
+  .then((result) => {
+    res.send(result.rows);
+  })
+  .catch((err) => {
+    console.log('error getting favorites', err);
+    res.sendStatus(500);
+  })
+})
+
+app.delete('/favorites', (req, res) => {
+  db.deleteFavorite(req.query.favorite_id)
+  .then((result) => {
+    res.sendStatus(201)
+  })
+  .catch((err) => {
+    console.log('error deleting favorite', err)
     res.sendStatus(500)
   })
 })

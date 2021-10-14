@@ -24,7 +24,9 @@ class App extends Component {
       mapCenter: undefined,
       userInput: '',
       userId: undefined,
-      userName: undefined
+      userName: undefined,
+      favorites: [],
+      favoritesIds: []
     }
     this.setLocal = this.setLocal.bind(this);
     this.getBreweries = this.getBreweries.bind(this);
@@ -33,6 +35,7 @@ class App extends Component {
     this.geocode = this.geocode.bind(this);
     this.goto = this.goto.bind(this);
     this.login = this.login.bind(this);
+    this.getFavorites = this.getFavorites.bind(this);
   }
   getBreweries() {
     var url = `https://api.openbrewerydb.org/breweries?by_dist=${this.state.location.latitude},${this.state.location.longitude}`
@@ -62,6 +65,23 @@ class App extends Component {
       this.setState({
         location: loc.coords
       })
+    })
+  }
+  getFavorites() {
+    axios.get(`/favorites?user_id=${this.state.userId}`)
+    .then((response) => {
+      this.setState({
+        favorites: response.data
+      })
+      response.data.forEach((favorite) => {
+        this.setState({
+          favoritesIds: [...this.state.favoritesIds, favorite.id]
+        })
+      })
+      console.log(response.data)
+    })
+    .catch((err) => {
+      console.log('error getting favorites', err);
     })
   }
   searchChange(e) {
@@ -109,6 +129,8 @@ class App extends Component {
       this.setState({
         userId: res.data,
         userName: this.state.userInput
+      }, () => {
+        this.getFavorites();
       })
       console.log(res);
     })
@@ -145,7 +167,7 @@ class App extends Component {
         <div>
         <div><span>name </span><span>size </span><span>address </span> <span>website </span> <span>phone </span></div>
         {this.state.breweries.length ? <div>{this.state.breweries.map((brewery) => {
-          return (<Brewery brewery={brewery} goto={this.goto} userId={this.state.userId}/>)
+          return (<Brewery brewery={brewery} goto={this.goto} userId={this.state.userId} favorites={this.state.favorites}/>)
           })}</div> : null}
           </div>
         {this.state.breweries.length ? <Map breweries={this.state.breweries}
