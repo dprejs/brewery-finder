@@ -36,6 +36,7 @@ class App extends Component {
     this.goto = this.goto.bind(this);
     this.login = this.login.bind(this);
     this.getFavorites = this.getFavorites.bind(this);
+    this.showFavorites = this.showFavorites.bind(this);
   }
   getBreweries() {
     var url = `https://api.openbrewerydb.org/breweries?by_dist=${this.state.location.latitude},${this.state.location.longitude}`
@@ -135,6 +136,11 @@ class App extends Component {
       console.log(res);
     })
   }
+  showFavorites() {
+    this.setState({
+      breweries: this.state.favorites
+    })
+  }
   componentDidMount() {
     this.setState({
       geo: navigator.geolocation
@@ -162,8 +168,8 @@ class App extends Component {
         name="locSearch"
         onChange={this.searchChange}/>
         <button onClick={this.searchLocation}>search</button>
-        {this.state.location ? <h2>lat: {this.state.location.latitude}
-          long: {this.state.location.longitude}</h2> : null}
+        {this.state.userId ? <button onClick={this.showFavorites}>show favorites</button> : null}
+
         <div>
         <div><span>name </span><span>size </span><span>address </span> <span>website </span> <span>phone </span></div>
         {this.state.breweries.length ? <div>{this.state.breweries.map((brewery) => {
