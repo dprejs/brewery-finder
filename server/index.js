@@ -7,6 +7,7 @@ const app = express();
 
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 app.use(express.json());
+app.use('/dist/images', express.static(path.join(__dirname, '..', 'dist', 'images')))
 
 app.post('/user', (req, res) => {
   // console.log(req.body);

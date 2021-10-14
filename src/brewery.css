@@ -1,0 +1,27 @@
+.navigate img{
+  height: 30px;
+  margin-top: 6px;
+}
+.navigate {
+  display: flex;
+  align-items: center;
+}
+.comment-form {
+  display: grid;
+  grid-template-rows: auto 20vh auto ;
+  grid-template-columns: auto auto ;
+}
+.comment-form .title {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  font-size: large;
+}
+.comment-form textarea {
+
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+}
+.comment-form button {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+}

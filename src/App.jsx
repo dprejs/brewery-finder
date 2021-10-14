@@ -7,6 +7,7 @@ import Map from './Map.jsx'
 import keys from './../config.js';
 import { Loader } from '@googlemaps/js-api-loader';
 import Brewery from './brewery.jsx'
+import cheers from './cheers.svg';
 
 const loader = new Loader({
   apiKey: keys.maps,
@@ -70,20 +71,20 @@ class App extends Component {
   }
   getFavorites() {
     axios.get(`/favorites?user_id=${this.state.userId}`)
-    .then((response) => {
-      this.setState({
-        favorites: response.data
-      })
-      response.data.forEach((favorite) => {
+      .then((response) => {
         this.setState({
-          favoritesIds: [...this.state.favoritesIds, favorite.id]
+          favorites: response.data
         })
+        response.data.forEach((favorite) => {
+          this.setState({
+            favoritesIds: [...this.state.favoritesIds, favorite.id]
+          })
+        })
+        console.log(response.data)
       })
-      console.log(response.data)
-    })
-    .catch((err) => {
-      console.log('error getting favorites', err);
-    })
+      .catch((err) => {
+        console.log('error getting favorites', err);
+      })
   }
   searchChange(e) {
     e.preventDefault()
@@ -98,43 +99,43 @@ class App extends Component {
   }
   geocode(search) {
     loader.load()
-    .then((google) => {
-      const Geocoder = new google.maps.Geocoder
-      Geocoder.geocode({address: search}, (result) => {
-        this.setState({
-          location: {
-            latitude: result[0].geometry.location.lat(),
-            longitude: result[0].geometry.location.lng()
-          },
-          mapCenter: {
-            latitude: result[0].geometry.location.lat(),
-            longitude: result[0].geometry.location.lng()
-          }
-        }, () => {
-          this.getBreweries();
+      .then((google) => {
+        const Geocoder = new google.maps.Geocoder
+        Geocoder.geocode({ address: search }, (result) => {
+          this.setState({
+            location: {
+              latitude: result[0].geometry.location.lat(),
+              longitude: result[0].geometry.location.lng()
+            },
+            mapCenter: {
+              latitude: result[0].geometry.location.lat(),
+              longitude: result[0].geometry.location.lng()
+            }
+          }, () => {
+            this.getBreweries();
+          })
+          console.log(result)
+          console.log(result[0].geometry.location.lat())
         })
-        console.log(result)
-        console.log(result[0].geometry.location.lat() )
       })
-    })
-    .catch((err) => {
-      console.log('error loading maps api', err)
-    })
+      .catch((err) => {
+        console.log('error loading maps api', err)
+      })
   }
   login(e) {
     e.preventDefault();
     axios.post('/user', {
       name: this.state.userInput
     })
-    .then((res) => {
-      this.setState({
-        userId: res.data,
-        userName: this.state.userInput
-      }, () => {
-        this.getFavorites();
+      .then((res) => {
+        this.setState({
+          userId: res.data,
+          userName: this.state.userInput
+        }, () => {
+          this.getFavorites();
+        })
+        console.log(res);
       })
-      console.log(res);
-    })
   }
   showFavorites() {
     this.setState({
@@ -157,29 +158,48 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {this.state.userName ? <div>Hello {this.state.userName}!<br/></div> : null}
-        <input type="text"
-        placeholder="user login"
-        name="userInput"
-        onChange={this.searchChange}/>
-        <button onClick={this.login}>login</button>
-        <input type="text"
-        placeholder="search location"
-        name="locSearch"
-        onChange={this.searchChange}/>
-        <button onClick={this.searchLocation}>search</button>
-        {this.state.userId ? <button onClick={this.showFavorites}>show favorites</button> : null}
+        {this.state.userName ? <h1 className='cheers'><img src={cheers} />Cheers {this.state.userName}! <br /></h1> :
+        <h1 className='cheers'><img src={cheers} /></h1>}
+        <div className='nav-bar'>
+          <input type="text"
+            placeholder="user login"
+            name="userInput"
+            onChange={this.searchChange} />
+          <button onClick={this.login}>login</button>
+          <input type="text"
+            placeholder="search location"
+            name="locSearch"
+            onChange={this.searchChange} />
+          <button onClick={this.searchLocation}>search</button>
+          {this.state.userId ? <button onClick={this.showFavorites}>show favorites</button> : null}
 
-        <div>
-        <div><span>name </span><span>size </span><span>address </span> <span>website </span> <span>phone </span></div>
-        {this.state.breweries.length ? <div>{this.state.breweries.map((brewery) => {
-          return (<Brewery brewery={brewery} goto={this.goto} userId={this.state.userId} favorites={this.state.favorites}/>)
-          })}</div> : null}
-          </div>
-        {this.state.breweries.length ? <Map breweries={this.state.breweries}
-          loc={this.state.location}
-          center={this.state.mapCenter}
-        /> : null}
+        </div>
+
+        <div className='list'>
+          <table>
+            <tr className='title-row'>
+              <th>show on map</th>
+              <th>name</th>
+              <th>size</th>
+              <th>address</th>
+              <th>website</th>
+              <th>phone </th>
+              {this.state.userId ? <><th>Favorite?</th>
+                <th>Comment</th></> : null}
+
+            </tr>
+            {this.state.breweries.length ? this.state.breweries.map((brewery) => {
+              return (<Brewery brewery={brewery} goto={this.goto} userId={this.state.userId} favorites={this.state.favorites} />)
+            }) : null}
+          </table>
+
+        </div>
+        <div className='map'>
+          {this.state.breweries.length ? <Map breweries={this.state.breweries}
+            loc={this.state.location}
+            center={this.state.mapCenter}
+          /> : null}
+        </div>
       </div>
     );
   }

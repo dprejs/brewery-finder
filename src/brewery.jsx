@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import Modal from './modal.jsx'
+import Modal from './modal.jsx';
+import navigate from './navigate.svg';
+import './brewery.css';
 
 export default class Brewery extends React.Component {
   constructor(props) {
@@ -79,32 +81,32 @@ export default class Brewery extends React.Component {
   }
   render() {
     return (
-      <div>
-        <button onClick={() => {
+      <tr>
+        <th><button className='navigate' onClick={() => {
           this.props.goto({
             latitude: this.props.brewery.latitude,
             longitude: this.props.brewery.longitude
           })
-        }}>goto</button>
-        <span>{this.props.brewery.name} | </span>
-        <span>{this.props.brewery.brewery_type} | </span>
-        <span>{this.props.brewery.street} | </span>
-        <span>{this.props.brewery.website_url} | </span>
-        <span>{this.props.brewery.phone} </span>
-        {this.props.userId ? <button onClick={this.state.isFavorite ? this.removeFavorite : this.toggleModal}>
+        }}><img src={navigate} /></button></th>
+        <th>{this.props.brewery.name}</th>
+        <th>{this.props.brewery.brewery_type}</th>
+        <th>{this.props.brewery.street}</th>
+        <th><a href={this.props.brewery.website_url}>website</a></th>
+        <th>{this.props.brewery.phone} </th>
+        {this.props.userId ? <th><button onClick={this.state.isFavorite ? this.removeFavorite : this.toggleModal}>
           {this.state.isFavorite ? <span>Remove from Favorites</span> : <span>Add to Favorites</span>}
-          </button> : null}
+          </button></th> : null}
         {this.state.isFavorite ? <div>{this.state.favoriteComment}</div> : null}
         <Modal show={this.state.showModal}
         handleClose={this.toggleModal}
         >
-          <div>
-            Comment:
-            <input type="text" onChange={this.commentChange}/>
+          <div className='comment-form'>
+            <span className='title'>Comment:</span>
+            <textarea onChange={this.commentChange}/>
             <button onClick={this.addFavorite}>save favorite</button>
           </div>
         </Modal>
-      </div>
+      </tr>
     )
   }
 }
