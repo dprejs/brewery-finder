@@ -11,11 +11,26 @@ app.use(express.json());
 app.post('/user', (req, res) => {
   // console.log(req.body);
   // res.sendStatus(200);
-  db.addUser(req.body.name)
-  .then(() => res.sendStatus(201))
+  db.checkIfUserExists(req.body.name)
   .catch((err) => {
-    console.log('error adding name', err);
-    res.sendStatus(500);
+    console.log('error searching name', err)
+  })
+  .then((results) => {
+    if (results.rows.length === 0) {
+      db.addUser(req.body.name)
+      .then((results) => {
+        res.Status(201)
+        res.json(results.rows[0].id)
+      })
+      .catch((err) => {
+        console.log('error adding name', err);
+        res.sendStatus(500);
+      })
+    } else {
+      // console.log(results.rows[0].id)
+      res.status(200);
+      res.json(results.rows[0].id);
+    }
   })
 })
 

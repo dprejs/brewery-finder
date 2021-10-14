@@ -21,7 +21,8 @@ const addUserQuery = (value) => {
     name: 'add-user',
     text: `INSERT INTO users
     (name)
-    VALUES ($1)`,
+    VALUES ($1)
+    RETURNING id`,
     values: [value]
   }
 }
@@ -29,7 +30,7 @@ const getUserQuery = (value) => {
   return {
     name: 'get-user',
     text: `SELECT * FROM users
-    WHERE name=$1`,
+    WHERE name = $1`,
     values: [value]
   }
 }
@@ -37,5 +38,8 @@ const getUserQuery = (value) => {
 module.exports = {
   addUser: (user) => {
     return pool.query(addUserQuery(user))
+  },
+  checkIfUserExists: (user) => {
+    return pool.query(getUserQuery(user))
   }
 }
