@@ -67,8 +67,8 @@ export class MapContainer extends React.Component {
         lng: this.props.loc.longitude
       }}
       center={{
-        lat: this.props.loc.latitude,
-        lng: this.props.loc.longitude
+        lat: this.props.center.latitude,
+        lng: this.props.center.longitude
       }}
       mapTypeControl={false}
       fullscreenControl={false}

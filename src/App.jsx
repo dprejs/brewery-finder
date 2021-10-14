@@ -6,7 +6,7 @@ import "./App.css";
 import Map from './Map.jsx'
 import keys from './../config.js';
 import { Loader } from '@googlemaps/js-api-loader';
-
+import Brewery from './brewery.jsx'
 
 const loader = new Loader({
   apiKey: keys.maps,
@@ -20,13 +20,17 @@ class App extends Component {
       geo: undefined,
       location: undefined,
       breweries: [],
-      locSearch: ''
+      locSearch: '',
+      mapCenter: undefined,
+      userInput: '',
     }
     this.setLocal = this.setLocal.bind(this);
     this.getBreweries = this.getBreweries.bind(this);
     this.searchChange = this.searchChange.bind(this);
     this.searchLocation = this.searchLocation.bind(this);
     this.geocode = this.geocode.bind(this);
+    this.goto = this.goto.bind(this);
+    this.login = this.login.bind(this);
   }
   getBreweries() {
     var url = `https://api.openbrewerydb.org/breweries?by_dist=${this.state.location.latitude},${this.state.location.longitude}`
@@ -44,6 +48,11 @@ class App extends Component {
       .catch((err) => {
         console.log('error getting breweries', err);
       })
+  }
+  goto(coords) {
+    this.setState({
+      mapCenter: coords
+    })
   }
   setLocal() {
     this.state.geo.getCurrentPosition((loc) => {
@@ -73,6 +82,10 @@ class App extends Component {
           location: {
             latitude: result[0].geometry.location.lat(),
             longitude: result[0].geometry.location.lng()
+          },
+          mapCenter: {
+            latitude: result[0].geometry.location.lat(),
+            longitude: result[0].geometry.location.lng()
           }
         }, () => {
           this.getBreweries();
@@ -85,13 +98,20 @@ class App extends Component {
       console.log('error loading maps api', err)
     })
   }
+  login(e) {
+    e.preventDefault();
+    axios.post('/user', {
+      name: this.state.userInput
+    })
+  }
   componentDidMount() {
     this.setState({
       geo: navigator.geolocation
     })
     navigator.geolocation.getCurrentPosition((loc) => {
       this.setState({
-        location: loc.coords
+        location: loc.coords,
+        mapCenter: loc.coords,
       }, () => {
         this.getBreweries()
       })
@@ -101,13 +121,27 @@ class App extends Component {
     return (
       <div className="App">
         <h1> Hello, Beer! </h1>
-        <input type="text" placeholder="search location" name="locSearch" onChange={this.searchChange}/>
+        <input type="text"
+        placeholder="user login"
+        name="userInput"
+        onChange={this.searchChange}/>
+        <button onClick={this.login}>login</button>
+        <input type="text"
+        placeholder="search location"
+        name="locSearch"
+        onChange={this.searchChange}/>
         <button onClick={this.searchLocation}>search</button>
         {this.state.location ? <h2>lat: {this.state.location.latitude}
           long: {this.state.location.longitude}</h2> : null}
-        {this.state.breweries.length ? <div>{this.state.breweries.map(brewery => brewery.name)}</div> : null}
+        <div>
+        <div><span>name </span><span>size </span><span>address </span> <span>website </span> <span>phone </span></div>
+        {this.state.breweries.length ? <div>{this.state.breweries.map((brewery) => {
+          return (<Brewery brewery={brewery} goto={this.goto}/>)
+          })}</div> : null}
+          </div>
         {this.state.breweries.length ? <Map breweries={this.state.breweries}
           loc={this.state.location}
+          center={this.state.mapCenter}
         /> : null}
       </div>
     );
